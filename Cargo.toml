@@ -1,0 +1,32 @@
+[package]
+name = "elfcalc"
+version = "0.1.0"
+edition = "2021"
+description = "Fast, exact replay and checking of Elf Calculator programs (Kaggle Santa 2026), plus value-DAG extraction"
+license = "MIT"
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["rlib", "cdylib"]
+
+[[bin]]
+name = "elfcalc"
+path = "src/main.rs"
+
+[features]
+# C ABI used by the WebAssembly playground (cargo build --release --lib --target wasm32-unknown-unknown --features ffi)
+ffi = []
+
+[dependencies]
+
+[profile.release]
+overflow-checks = true
+lto = true
+codegen-units = 1
+opt-level = 3
+panic = "abort"
+
+# like-for-like benchmark profile (Goose release builds do not trap on overflow either)
+[profile.bench-nocheck]
+inherits = "release"
+overflow-checks = false
